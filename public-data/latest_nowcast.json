@@ -1,0 +1,64 @@
+{
+  "schema_version": 2,
+  "fiscal_year": "FY2026/27",
+  "nowcast": 0.9431197091791306,
+  "public_display": "0.9%",
+  "model_version": "V1.1",
+  "change_since_previous_update": -0.030590799534847224,
+  "information_cutoff": "2026-11-23T20:15:06.736017+00:00",
+  "updated_at": "2026-11-23T20:15:06.736017+00:00",
+  "baseline": 1.2109227432563883,
+  "conditions_adjustment": -0.2678030340772577,
+  "latest_reference_periods": {
+    "brent": "2026-09",
+    "cpi": "2026-09",
+    "credit": "2026-08",
+    "exports": "2026Q2",
+    "rainfall": "2026-10",
+    "remittances": "2026-08"
+  },
+  "decomposition": [
+    {
+      "block": "prices",
+      "label": "Price & oil",
+      "impact": -0.08957146564977676
+    },
+    {
+      "block": "household",
+      "label": "Domestic demand & finance",
+      "impact": -0.07518362180772549
+    },
+    {
+      "block": "external",
+      "label": "Exports",
+      "impact": 0.07009296380017753
+    },
+    {
+      "block": "weather",
+      "label": "Weather & agriculture",
+      "impact": -0.1731409104199331
+    }
+  ],
+  "recent_updates": [
+    {
+      "date": "2026-11-23T20:15:06.736017+00:00",
+      "reference_period": "2026-08",
+      "indicator": "Real remittances · Domestic demand & finance",
+      "block": "household",
+      "impact": -0.02293009859003533,
+      "previous_nowcast": 0.9737105087139778,
+      "resulting_nowcast": 0.9507804101239424,
+      "kind": "New observation"
+    },
+    {
+      "date": "2026-11-23T20:15:06.736017+00:00",
+      "reference_period": "2026-10",
+      "indicator": "Rainfall revision · Weather & agriculture",
+      "block": "weather",
+      "impact": -0.00766070094481211,
+      "previous_nowcast": 0.9507804101239424,
+      "resulting_nowcast": 0.9431197091791306,
+      "kind": "Revision"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "description": "An experimental GDP nowcast combining a historical statistical baseline with conservatively calibrated signals from publicly available economic indicators.",
+  "overview": [
+    "The target is Tonga fiscal-year-over-fiscal-year real GDP growth. Each fiscal year runs from July 1 to June 30.",
+    "The statistical baseline is the frozen expanding historical mean of 30 annual GDP growth observations through FY2024/25. It is an anchor, not a standalone nowcast.",
+    "CPI, Brent, real remittances, credit and rainfall retain monthly frequency. Merchandise exports retain native quarterly frequency; quarterly trade is never interpolated or divided into artificial months.",
+    "Observed periods use accepted public data. Missing and future periods use frozen projection rules to form full-fiscal-year block conditions; projected values are not observations.",
+    "After initialization, changes compare consecutive comparable full-fiscal-year block projections. New releases create immutable dated updates; changes to weights, definitions or projection rules require a separately reviewed model version.",
+    "The household block is 50% standardized real remittances and 50% standardized credit growth, divided by the frozen composite standard deviation 0.711609649730. Credit uses latest-valid persistence; remittances use the trailing-three-month rule.",
+    "The ordinary drought channel maps a rainfall-based agricultural growth deviation through the lagged real agriculture share. Theta = 0.50 discounts the mapped effect by half; it is not a claim that agriculture has a fixed GDP multiplier."
+  ],
+  "disclaimer": "This is an independent experimental statistical nowcast based exclusively on publicly available data. It is not an official forecast and does not represent the views of the IMF, the Government of Tonga, the National Reserve Bank of Tonga, the Tonga Statistics Department, or any other institution.",
+  "blocks": [
+    {
+      "id": "prices",
+      "name": "Price & oil",
+      "description": "CPI and Brent conditions projected over the full fiscal year.",
+      "weight": 0.05,
+      "unit": "GDP percentage points per block standard deviation"
+    },
+    {
+      "id": "household",
+      "name": "Domestic demand & finance",
+      "description": "A 50/50 real-remittance and total-credit composite, normalized by its frozen historical standard deviation.",
+      "weight": 0.1,
+      "unit": "GDP percentage points per block standard deviation"
+    },
+    {
+      "id": "external",
+      "name": "Exports",
+      "description": "Exports only, using growth in fiscal-year totals and robust historical scaling.",
+      "weight": 0.1,
+      "unit": "GDP percentage points per block standard deviation"
+    },
+    {
+      "id": "weather",
+      "name": "Weather & agriculture",
+      "description": "Rainfall-related agricultural growth deviations mapped through the lagged real agriculture share and discounted by 50%.",
+      "weight": 0.5,
+      "unit": "share-mapped agricultural growth effect (50% discount)"
+    }
+  ],
+  "sources": [
+    {
+      "id": "gdp",
+      "name": "Tonga Statistics Department — national accounts",
+      "url": "https://tongastats.gov.to/statistics/economics/national-accounts/",
+      "frequency": "Annual fiscal year",
+      "definition": "Real GDP, constant 2016/17 TOP; the accepted historical levels provide the statistical baseline.",
+      "reference_period": "FY2024/25",
+      "units": "Constant 2016/17 TOP million; FY/FY growth in percent",
+      "coverage": "FY1994/95–FY2024/25",
+      "caveat": "Limited annual sample; national accounts are revisable."
+    },
+    {
+      "id": "cpi",
+      "name": "NRBT — headline inflation; TSD — historical CPI",
+      "url": "https://www.reservebank.to/",
+      "frequency": "Monthly",
+      "definition": "Confirmed live NRBT headline inflation; accepted historical TSD CPI index also deflates remittances.",
+      "reference_period": "2026-09",
+      "units": "CPI index and annual inflation in percent",
+      "coverage": "1996-01–2026-09",
+      "caveat": "Spliced historical CPI and documented official growth links; breaks and deflator comparability remain relevant."
+    },
+    {
+      "id": "remittances",
+      "name": "NRBT — remittances",
+      "url": "https://www.reservebank.to/data/docs/economics/nrbt_rem_data.xlsx",
+      "frequency": "Monthly",
+      "definition": "Public BPM6 remittances, deflated using the accepted CPI history.",
+      "reference_period": "2026-08",
+      "units": "Nominal TOP million, CPI-deflated for the model",
+      "coverage": "2014-05–2026-08",
+      "caveat": "BPM6 history starts May 2014; nominal remittances are not themselves a real purchasing-power measure."
+    },
+    {
+      "id": "credit",
+      "name": "NRBT — monetary policy data",
+      "url": "https://www.reservebank.to/index.php/eco-reviews/monetary-policy-data",
+      "frequency": "Monthly",
+      "definition": "Source-supported total credit. Institutional coverage follows the source and is not silently relabelled.",
+      "reference_period": "2026-08",
+      "units": "TOP million levels; annual growth in percent",
+      "coverage": "2015-01–2026-08",
+      "caveat": "Source-supported total lending/credit, including NRBT-documented banks and Government Development Loans. Preferred analytical interpretation is non-government-sector/private and SOE credit excluding central-government credit where supported; institutional coverage is not silently relabelled or claimed verified."
+    },
+    {
+      "id": "exports",
+      "name": "Tonga Statistics Department — merchandise trade",
+      "url": "https://tongastats.gov.to/download/507/2026/13738/international-merchandise-trade-statistics-quarter-2-2026_v1.pdf",
+      "frequency": "Quarterly",
+      "definition": "Native quarterly merchandise exports. No artificial monthly trade observations; imports are not a production block.",
+      "reference_period": "2026Q2",
+      "units": "TOP; fiscal-year export-total growth",
+      "coverage": "2014Q1–2026Q2",
+      "caveat": "Historical USD and modern TOP regimes remain separate; no cross-regime growth, no artificial monthly observations."
+    },
+    {
+      "id": "brent",
+      "name": "FRED — Brent crude oil",
+      "url": "https://fred.stlouisfed.org/series/POILBREUSDM",
+      "frequency": "Monthly",
+      "definition": "Monthly Brent crude oil price, POILBREUSDM.",
+      "reference_period": "2026-09",
+      "units": "US dollars per barrel",
+      "coverage": "1992-01–2026-09",
+      "caveat": "Oil-price conditions are not a direct measure of household income."
+    },
+    {
+      "id": "rainfall",
+      "name": "WFP/HDX — Tonga subnational rainfall",
+      "url": "https://data.humdata.org/dataset/606de8e5-32ad-46d9-b73c-e6f04011f4fb/resource/7ac6aa74-92d4-4865-88d2-6a42c13b8596/download/ton-rainfall-subnat-full.csv",
+      "frequency": "Monthly",
+      "definition": "National rainfall conditions aggregated from the accepted subnational source; preliminary and final status retained.",
+      "reference_period": "2026-10",
+      "units": "Millimetres, transformed into a standardized drought signal",
+      "coverage": "Accepted monthly national series; latest reference period shown",
+      "caveat": "Preliminary rainfall can be revised to final; national aggregation does not capture every local crop or disaster effect."
+    },
+    {
+      "id": "exchange_rate",
+      "name": "IMF International Financial Statistics — quarterly TOP/USD, via DBnomics",
+      "url": "https://api.db.nomics.world/v22/series/IMF/IFS/Q.TO.ENDA_XDC_USD_RATE",
+      "frequency": "Quarterly; historical calibration only",
+      "definition": "Quarterly average TOP per US dollar used to convert historical USD export levels for calibration, not a new live production indicator.",
+      "reference_period": null,
+      "units": "TOP per US dollar; quarterly average",
+      "coverage": "Accepted historical calibration only",
+      "caveat": "The production calibration assumes that the relationship between a standardized export-activity signal and GDP growth is broadly stable across the documented trade-methodology break. This assumption cannot be statistically verified with the current modern sample."
+    }
+  ],
+  "limitations": [
+    "The annual GDP sample is small. This is not an official or statistically precise forecast.",
+    "Operational weights are conservatively shrunk and frozen, not repeatedly optimized as releases arrive.",
+    "Future months and quarters are projected using fixed rules and are not relabelled as observations.",
+    "Release contributions compare consecutive full-fiscal-year projections. Initialization is not release news.",
+    "Historical evaluations are hindsight/pseudo-vintage exercises, not verified real-time release histories.",
+    "Agricultural held-out performance improves, but only four matched aggregate-GDP comparisons are available and do not show a GDP-error improvement.",
+    "National accounts and indicator histories can be revised. Ordinary drought conditions are not a model of major disasters or reconstruction.",
+    "Tonga national-accounts revisions, rebasing or classification changes can alter historical GDP and agriculture shares; a software or methodology correction must not silently rewrite past estimates.",
+    "FY2025/26 sector levels are not yet available, so the latest available FY2024/25 agriculture share is used as the current mapping proxy."
+  ],
+  "weather_methodology": "The Weather & Agriculture block uses rainfall conditions to estimate drought-related deviations in real agricultural value-added growth. The implied agricultural effect is mapped to aggregate GDP using agriculture’s latest available lagged share of real output and discounted by 50 percent to reflect national-accounts measurement uncertainty, revisions, spillovers, and interactions with other sectors.",
+  "external_caveat": "The production calibration assumes that the relationship between a standardized export-activity signal and GDP growth is broadly stable across the documented trade-methodology break. This assumption cannot be statistically verified with the current modern sample.",
+  "validation": {
+    "gdp_levels": 31,
+    "gdp_growth_targets": 30,
+    "cpi_observations": 369,
+    "agriculture_levels": 31,
+    "agriculture_heldout_rmse_baseline": 6.309466778717037,
+    "agriculture_heldout_rmse_weather": 5.776836074014054,
+    "matched_agriculture_fys": 20,
+    "matched_gdp_comparisons": 4
+  }
+}
